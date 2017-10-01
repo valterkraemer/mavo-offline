@@ -1,11 +1,13 @@
 # Mavo-offline-interceptor
 
-An backend interceptor for [Mavo](https://mavo.io).
+A backend interceptor for [Mavo](https://mavo.io).
 
 ## Examples
 
-- To-Do List (PouchDB) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-pouchdb))
-- To-Do List (Firebase) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-firebase))
+These examples have 4-way data-binding (View - Model - LocalStorage - DB) so if you open the examples in multiple windows, the data will be synchronized between them.
+
+- To-Do List (PouchDB) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-pouchdb/))
+- To-Do List (Firebase) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-firebase/))
 
 Features:
 
