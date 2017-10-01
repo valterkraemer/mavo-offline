@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo</title>
+  <script src="../../../mavo-firebase/src/firebase.js"></script>
+
+  <script src="../../../mavo/dist/mavo.js"></script>
+  <link rel="stylesheet" href="../../../mavo/dist/mavo.css">
+
+  <script src="../../src/mavo-offline-interceptor.js"></script>
+  <script src="../../../mavo-firebase/src/mavo-firebase.js"></script>
+  <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
+
+  <script type="text/javascript">
+    firebase.initializeApp({
+      apiKey: 'AIzaSyD3-4ZXpNZkWbdlC7Fdg-ean0VZ36bwoEA',
+      authDomain: 'mavo-firebase-todo-d0311.firebaseapp.com',
+      databaseURL: 'https://mavo-firebase-todo-d0311.firebaseio.com',
+      projectId: 'mavo-firebase-todo-d0311',
+      storageBucket: '',
+      messagingSenderId: '681421141712'
+    });
+  </script>
+</head>
+<body>
+
+  <main mv-app="todo"
+    mv-storage="offline-interceptor?firebase"
+    firebase-default-permissions="read edit save"
+    mv-autosave="0.001">
+
+    <div class="mv-bar mv-ui">
+      <div class="offline-status"></div>
+    </div>
+
+    <header>
+      <h1>My tasks</h1>
+      <p><strong>[count(done)]</strong> done out of <strong>[count(task)]</strong> total</p>
+    </header>
+
+    <ul>
+      <li property="task" mv-multiple>
+        <label>
+          <input property="done" type="checkbox" />
+          <span property="taskTitle">Do stuff</span>
+        </label>
+      </li>
+    </ul>
+
+  </main>
+
+  <!--<script src="http://localhost:35729/livereload.js"></script>-->
+
+</body>
+</html>
