@@ -114,13 +114,13 @@
       this.storeTry().then(response => {
         // Updated
         this.storageSet('modified', false)
-
-        this.loading = false
-        this.updateStatus()
       }).catch(err => {
         this.mavo.error('Problem loading data', err)
       }).then(() => {
-        delete this.storing
+        this.loading = false
+        this.updateStatus()
+
+        this.storing = false
       })
 
       return Promise.resolve()
