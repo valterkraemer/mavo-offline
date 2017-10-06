@@ -9,7 +9,7 @@ These examples have 4-way data-binding (View - Model - LocalStorage - DB) so if 
 - To-Do List (PouchDB) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-pouchdb/))
 - To-Do List (Firebase) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-firebase/))
 
-Features:
+## Features
 
 - Enables the backend to push data to Mavo on server changes (3-way data-binding).
 - Caches data in LocalStorage, both when retrieving data from server and when saving data.
