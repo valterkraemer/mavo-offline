@@ -29,13 +29,9 @@
       }
 
       this.backend.onChange && this.backend.onChange(data => {
-        console.log('Interceptor onChange', data)
-
         if (this.isNewData(data)) {
-          console.log('isNewData')
           this.updateStorage(data)
 
-          console.log('Render')
           this.mavo.render(data)
           this.mavo.setUnsavedChanges(false)
         }
@@ -50,10 +46,10 @@
 
       if (!storageData) {
         return this.loadTry().then(data => {
-          this.updateStorage(data)
-
           this.loading = false
           this.updateStatus()
+
+          this.updateStorage(data)
           return data
         })
       }

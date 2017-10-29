@@ -4,7 +4,6 @@
   <title>Todo</title>
 
   <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
-  <script src="../../../mavo-pouchdb/src/pouchdb.authentication.min.js"></script>
 
   <script src="../../../mavo/dist/mavo.js"></script>
   <link rel="stylesheet" href="../../../mavo/dist/mavo.css">
@@ -30,7 +29,8 @@
 <body>
 
   <main mv-app="todo"
-    mv-storage="offline-interceptor?pouchdb=https://couchdb-d25f8f.smileupps.com/mavo"
+    mv-storage="offline-interceptor?pouchdb=https://couchdb-d25f8f.smileupps.com/todo"
+    unauthenticated-permissions="read edit save"
     mv-autosave="0.001">
 
     <div class="mv-bar mv-ui">
