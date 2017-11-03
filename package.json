@@ -5,7 +5,7 @@
   "author": "Valter Kraemer",
   "license": "MIT",
   "scripts": {
-    "build": "babel ./src/mavo-offline-interceptor.js -o ./dist/mavo-offline-interceptor.js --presets es2015 --source-maps & babel ./src/mavo-offline-interceptor.js -o ./dist/mavo-offline-interceptor.min.js --presets es2015 --presets minify --source-maps"
+    "build": "babel ./src/mavo-offline-interceptor.js -o ./dist/mavo-offline-interceptor.js --presets es2015 --source-maps & babel ./src/mavo-offline-interceptor.js -o ./dist/mavo-offline-interceptor.min.js --presets es2015,minify --source-maps"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
