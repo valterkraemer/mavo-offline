@@ -15,15 +15,14 @@ These examples have 4-way data-binding (View - Model - LocalStorage - DB) so if 
 - To-Do List (PouchDB) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-pouchdb/))
 - To-Do List (Firebase) - ([DEMO](https://valterkraemer.github.io/mavo-offline-interceptor/examples/todo-firebase/))
 
-## Setup mavo-offline-interceptor
+## Quick setup
 
-Add mavo-offline-interceptor
-
-    <script src="path/to/mavo-offline-interceptor.js"></script>
-
-Add `offline-interceptor?` before your expression in `mv-storage`
-
-E.g.
+1. Get the newest version of mavo-offline-interceptor from the [release section](https://github.com/valterkraemer/mavo-offline-interceptor/releases).
+2. Add mavo-offline-interceptor to the `<head>` of your HTML file.
+```
+<script src="path/to/mavo-offline-interceptor.js"></script>
+```
+3. Add `offline-interceptor?` before your expression in `mv-storage`
 ```
 <main mv-app="todo"
   mv-storage="offline-interceptor?pouchdb=http://localhost:5984/mavo">
