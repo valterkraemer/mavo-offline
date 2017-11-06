@@ -36,6 +36,10 @@
           this.mavo.setUnsavedChanges(false)
         }
       })
+
+      if (this.backend.upload) {
+        this.upload = this.backend.upload.bind(this.backend)
+      }
     },
 
     load: function () {
@@ -146,10 +150,6 @@
 
     logout: function () {
       return this.backend.logout()
-    },
-
-    upload: function (file) {
-      return this.backend.upload.apply(arguments)
     },
 
     storageSet: function (key, value) {
