@@ -29,7 +29,3 @@ These examples have 4-way data-binding (View - Model - LocalStorage - DB) so if 
 
   ...
 ```
-
-## Known issues
-
-You cannot use `autocomplete="0"` because of a [bug in Mavo](https://github.com/mavoweb/mavo/issues/256). However you can use `autocomplete="0.001"` (wait 1ms).
