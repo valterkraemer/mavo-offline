@@ -28,14 +28,19 @@
         })
       }
 
-      this.backend.onChange && this.backend.onChange(data => {
-        if (this.isNewData(data)) {
+      if (this.backend.onNewData) {
+        // Monkeypatch onNewData and store it to localStorage
+        let backendOnNewData = this.backend.onNewData.bind(this.backend)
+        this.backend.onNewData = data => {
           this.updateStorage(data)
-
-          this.mavo.render(data)
-          this.mavo.setUnsavedChanges(false)
+          backendOnNewData(data)
         }
-      })
+      }
+
+      // Listen do database changes if backend supports it
+      if (this.backend.setListenForChanges) {
+        this.backend.setListenForChanges(true)
+      }
 
       if (this.backend.upload) {
         this.upload = this.backend.upload.bind(this.backend)
