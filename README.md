@@ -8,6 +8,8 @@ This also means that you can store data even when offline. It will then store it
 
 Mavo-offline-interceptor also supports Mavo backends with server side pushes (e.g. [mavo-pouchdb](https://github.com/valterkraemer/mavo-pouchdb) and [mavo-firebase](https://github.com/valterkraemer/mavo-firebase)). That means it can update the view when there have been server side changes.
 
+Tested with Mavo version 0.1.5.
+
 ## Examples
 
 These examples have 4-way data-binding (View - Model - LocalStorage - DB) so if you open the examples in multiple windows, the data will be synchronized between them.
