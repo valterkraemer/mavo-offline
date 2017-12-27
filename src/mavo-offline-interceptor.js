@@ -11,10 +11,13 @@
 
       this.backend = new Backend(backendUrl, o)
       this.permissions = this.backend.permissions
-      this.key = this.backend.key
+      this.key = this.backend.id
 
       this.online = false
       this.loading = false
+      this.storing = false
+
+      this.ready = Promise.resolve()
 
       this.offlineStatusElem = $('.offline-status', this.mavo.element)
 
@@ -48,52 +51,56 @@
     },
 
     load: function () {
-      this.loading = true
-      this.updateStatus()
+      this.ready = this.ready.then(() => this.loadTry())
 
       let storageData = this.storageGet('data')
 
-      if (!storageData) {
-        return this.loadTry().then(data => {
-          this.loading = false
-          this.updateStatus()
+      if (storageData) {
+        this.ready.then(data => {
+          if (this.isNewData(data)) {
+            this.mavo.render(data)
+            this.mavo.setUnsavedChanges(false)
+            return
+          }
 
-          this.updateStorage(data)
-          return data
+          if (this.storageGet('modified')) {
+            return this.store(this.storageGet('data'))
+          }
         })
+
+        return Promise.resolve(storageData)
       }
 
-      this.loadTry().then(data => {
+      return this.ready.then(data => {
+        this.storageSet('data', data)
+        this.storageSet('modified', false)
+        return data
+      })
+    },
+
+    loadTry: function () {
+      this.loading = true
+      this.updateStatus()
+
+      return helper.call(this).then(data => {
         this.loading = false
         this.updateStatus()
 
-        if (this.isNewData(data)) {
-          this.updateStorage(data)
-
-          this.mavo.render(data)
-          this.mavo.setUnsavedChanges(false)
-        } else if (this.storageGet('modified') && !this.storing) {
-          return this.store(this.storageGet('data'), true)
-        }
+        return data
       })
 
-      return Promise.resolve(storageData)
+      function helper () {
+        return this.backend.load().catch(err => {
+          if (err.status === 0) {
+            return delay(5000).then(() => helper())
+          }
+          return Promise.reject(err)
+        })
+      }
     },
 
     isNewData: function (data) {
       return this.backend.compareDocRevs(this.storageGet('data'), data) === 1
-    },
-
-    loadTry: function () {
-      return this.loadTrying || (this.loadTrying = this.backend.load().catch(err => {
-        if (err.status === 0) {
-          return delay(5000).then(() => this.backend.load())
-        }
-        return Promise.reject(err)
-      }).then(data => {
-        delete this.loadTrying
-        return data
-      }))
     },
 
     updateStorage: function (data) {
@@ -101,41 +108,32 @@
       this.storageSet('modified', false)
     },
 
-    store: function (data, overrideUnsavedChanges) {
-      this.storeData = data
-
-      if ((!this.mavo.unsavedChanges && !overrideUnsavedChanges) || this.storing) {
+    store: function (data) {
+      if (!this.mavo.unsavedChanges) {
         return Promise.resolve()
       }
-
-      this.loading = true
-      this.updateStatus()
-
-      this.storing = true
 
       this.storageSet('data', data)
       this.storageSet('modified', true)
 
-      this.storeTry().then(response => {
-        // Updated
-        this.storageSet('modified', false)
-      }).catch(err => {
-        this.mavo.error('Problem loading data', err)
-      }).then(() => {
-        this.loading = false
+      this.storeData = data
+
+      if (!this.storing) {
+        this.storing = true
         this.updateStatus()
 
-        this.storing = false
-      })
+        this.ready = this.ready.then(() => this.storeTry()).then(() => {
+          this.storing = false
+          this.updateStatus()
+        })
+      }
 
       return Promise.resolve()
     },
 
     storeTry: function (data) {
-      if (this.storeData) {
-        data = this.storeData
-        delete this.storeData
-      }
+      data = this.storeData || data
+      delete this.storeData
 
       return this.backend.store(data).catch(err => {
         switch (err.status) {
@@ -146,7 +144,11 @@
         }
 
         return Promise.reject(err)
-      }).then(response => this.storeData ? this.storeTry() : response)
+      }).then(() => {
+        if (this.storeData) {
+          return this.storeTry()
+        }
+      })
     },
 
     login: function () {
@@ -173,26 +175,27 @@
         return
       }
 
-      let status
+      // 0: Offline
+      // 1: Up to date
+      // 2: Loading
+      // 3: Storing
 
-      if (!this.online) {
-        status = 'offline'
-      } else {
-        status = this.loading ? 'loading' : 'updated'
+      let status = 'Offline'
+
+      if (this.online) {
+        status = 'Up to date'
+
+        if (this.storing) {
+          status = 'Storing'
+        }
+
+        if (this.loading) {
+          status = 'Loading'
+        }
       }
 
       this.offlineStatusElem.setAttribute('status', status)
-
-      let text = 'Offline'
-      switch (status) {
-        case 'updated':
-          text = 'Up to date'
-          break
-        case 'loading':
-          text = 'Loading'
-      }
-
-      this.offlineStatusElem.textContent = text
+      this.offlineStatusElem.textContent = status
     },
 
     static: {
@@ -230,14 +233,14 @@
         vertical-align: top;
       }
 
-      .offline-status[status=loading]:after {
+      .offline-status[status="Up to date"]:after {
+        border-color: #6AC715;
+      }
+
+      .offline-status[status="Loading"]:after, .offline-status[status="Storing"]:after {
         border-color: #f3f3f3;
         border-top-color: #13A0F2;
         animation: spin 1s linear infinite;
-      }
-
-      .offline-status[status=updated]:after {
-        border-color: #6AC715;
       }
 
       @keyframes spin {
