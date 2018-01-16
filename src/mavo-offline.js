@@ -87,7 +87,7 @@
         this.loading = false
         this.updateStatus()
 
-        return data
+        return data || {}
       })
 
       function helper () {
