@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo Remote</title>
+
+  <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
+  <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
+
+  <script src="../../src/mavo-offline.js"></script>
+  <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
+</head>
+<body>
+
+  <main mv-app="todo-github"
+    mv-storage="offline?https://github.com/valter-test/mavo-todo-data">
+
+    <div class="mv-bar mv-ui">
+      <div class="offline-status"></div>
+    </div>
+
+    <header>
+      <h1>My tasks</h1>
+      <p><strong>[count(done)]</strong> done out of <strong>[count(task)]</strong> total</p>
+    </header>
+
+    <ul>
+      <li property="task" mv-multiple>
+        <label>
+          <input property="done" type="checkbox" />
+          <span property="taskTitle">Do stuff</span>
+        </label>
+      </li>
+    </ul>
+
+  </main>
+
+  <!--<script src="http://localhost:35729/livereload.js"></script>-->
+
+</body>
+</html>
