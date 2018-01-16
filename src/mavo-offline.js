@@ -6,12 +6,11 @@
     extends: Mavo.Backend,
     id: 'Pouchbd',
     constructor: function (url, o) {
-      let backendUrl = url.split('offline-interceptor?')[1]
-      let Backend = Mavo.Backend.types.filter(Backend => Backend.test(backendUrl))[0]
+      let backendUrl = url.split('offline?')[1]
+      let Backend = Mavo.Backend.types.filter(Backend => Backend.test(backendUrl))[0] || Mavo.Backend.Remote
 
       this.backend = new Backend(backendUrl, o)
       this.permissions = this.backend.permissions
-      this.key = this.backend.id
 
       this.online = false
       this.loading = false
@@ -21,14 +20,16 @@
 
       this.offlineStatusElem = $('.offline-status', this.mavo.element)
 
-      if (this.offlineStatusElem && this.backend.onStatusChange) {
+      if (this.offlineStatusElem) {
         addOfflineStatusElemStyles()
         this.updateStatus()
 
-        this.backend.onStatusChange(isOnline => {
-          this.online = isOnline
-          this.updateStatus()
-        })
+        if (this.backend.onStatusChange) {
+          this.backend.onStatusChange(isOnline => {
+            this.online = isOnline
+            this.updateStatus()
+          })
+        }
       }
 
       if (this.backend.onNewData) {
@@ -60,6 +61,7 @@
           if (this.isNewData(data)) {
             this.mavo.render(data)
             this.mavo.setUnsavedChanges(false)
+            this.updateStorage(data)
             return
           }
 
@@ -72,8 +74,7 @@
       }
 
       return this.ready.then(data => {
-        this.storageSet('data', data)
-        this.storageSet('modified', false)
+        this.updateStorage(data)
         return data
       })
     },
@@ -100,6 +101,10 @@
     },
 
     isNewData: function (data) {
+      if (!this.backend.compareDocRevs) {
+        return true
+      }
+
       return this.backend.compareDocRevs(this.storageGet('data'), data) === 1
     },
 
@@ -161,38 +166,21 @@
 
     storageSet: function (key, value) {
       try {
-        window.localStorage[`offline-interceptor-${this.key}-${key}`] = JSON.stringify(value)
+        window.localStorage[`offline-${this.mavo.id || 'default'}-${key}`] = JSON.stringify(value)
       } catch (err) {}
     },
     storageGet: function (key) {
       try {
-        return JSON.parse(window.localStorage[`offline-interceptor-${this.key}-${key}`])
+        return JSON.parse(window.localStorage[`offline-${this.mavo.id || 'default'}-${key}`])
       } catch (err) {}
     },
 
     updateStatus: function () {
-      if (!this.offlineStatusElem || !this.backend.onStatusChange) {
+      if (!this.offlineStatusElem) {
         return
       }
 
-      // 0: Offline
-      // 1: Up to date
-      // 2: Loading
-      // 3: Storing
-
-      let status = 'Offline'
-
-      if (this.online) {
-        status = 'Up to date'
-
-        if (this.storing) {
-          status = 'Storing'
-        }
-
-        if (this.loading) {
-          status = 'Loading'
-        }
-      }
+      let status = getStatus(this)
 
       this.offlineStatusElem.setAttribute('status', status)
       this.offlineStatusElem.textContent = status
@@ -200,7 +188,7 @@
 
     static: {
       test: value => {
-        return /offline-interceptor/.test(value)
+        return /offline/.test(value)
       }
     }
   }))
@@ -209,6 +197,33 @@
     return new Promise(resolve => {
       setTimeout(resolve, ms)
     })
+  }
+
+  function getStatus (_this) {
+    // 0: Offline
+    // 1: Up to date
+    // 2: Loading
+    // 3: Storing
+
+    if (_this.backend.onStatusChange) {
+      if (!_this.online) {
+        return 'Offline'
+      }
+
+      if (!_this.storing && !_this.loading) {
+        return 'Up to date'
+      }
+    }
+
+    if (_this.loading) {
+      return 'Loading'
+    }
+
+    if (_this.storing) {
+      return 'Storing'
+    }
+
+    return 'Done'
   }
 
   function addOfflineStatusElemStyles () {
@@ -234,6 +249,10 @@
       }
 
       .offline-status[status="Up to date"]:after {
+        border-color: #6AC715;
+      }
+
+      .offline-status[status="Done"]:after {
         border-color: #6AC715;
       }
 

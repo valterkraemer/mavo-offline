@@ -3,13 +3,13 @@
 <head>
   <title>Todo</title>
 
-  <script src="../../../mavo-pouchdb/src/pouchdb.min.js"></script>
+  <script src="../../../mavo-couchdb/src/pouchdb.min.js"></script>
 
   <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
   <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
 
-  <script src="../../src/mavo-offline-interceptor.js"></script>
-  <script src="../../../mavo-pouchdb/src/mavo-pouchdb.js"></script>
+  <script src="../../src/mavo-offline.js"></script>
+  <script src="../../../mavo-couchdb/src/mavo-couchdb.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
 
   <!--<script>
@@ -28,8 +28,8 @@
 </head>
 <body>
 
-  <main mv-app="todo-pouchdb"
-    mv-storage="offline-interceptor?pouchdb=https://couchdb-d25f8f.smileupps.com/todo"
+  <main mv-app="todo-couchdb"
+    mv-storage="offline?couchdb=https://couchdb-d25f8f.smileupps.com/todo"
     mv-unauthenticated-permissions="read edit save"
     mv-autosave="0.001">
 
