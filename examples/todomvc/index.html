@@ -1,0 +1,99 @@
+<!doctype html>
+<html data-framework="vue">
+	<head>
+		<meta charset="utf-8">
+    <title>Mavo • TodoMVC</title>
+
+    <script src="../../../mavo-firebase/src/firebase.js"></script>
+
+    <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
+    <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
+
+    <script src="../../src/mavo-offline.js"></script>
+    <script src="../../../mavo-firebase/src/mavo-firebase.js"></script>
+
+    <link rel="stylesheet" href="assets/index.css">
+
+    <style>
+      .todo {
+        min-height: 58px;
+      }
+
+      .toggle:checked + label {
+        color: #d9d9d9;
+        text-decoration: line-through;
+      }
+
+      .mv-add {
+        margin: 2px;
+        padding: 3px 7px;
+        border: 1px solid rgba(175, 47, 47, 0.2);
+        border-radius: 3px;
+      }
+
+      .filters input {
+        display: none;
+      }
+
+      .filters span {
+        margin: 3px;
+        padding: 3px 7px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+      }
+
+      .filters label:hover span {
+        border-color: rgba(175, 47, 47, 0.1);
+      }
+
+      .filters input:checked + span {
+        border-color: rgba(175, 47, 47, 0.2);
+      }
+    </style>
+	</head>
+	<body>
+    <section class="todoapp"
+      mv-app="todo-firebase"
+      mv-storage="offline?https://mavo-firebase-todo-d0311.firebaseio.com"
+      mv-firebase-api-key="AIzaSyD3-4ZXpNZkWbdlC7Fdg-ean0VZ36bwoEA"
+      mv-firebase-auth-domain="mavo-firebase-todo-d0311.firebaseapp.com"
+      mv-firebase-storage-bucket="mavo-firebase-todo-d0311.appspot.com"
+      mv-autosave="0"
+      mv-server-push="true">
+
+			<section class="main">
+				<ul class="todo-list">
+          <li class="todo"
+            property="task"
+            mv-multiple
+            mv-if="filter == 'all' || (filter == 'active' && !done) || (filter == 'completed' && done)">
+
+						<div class="view">
+							<input class="toggle" type="checkbox" property="done">
+							<label property="taskTitle"></label>
+						</div>
+          </li>
+        </ul>
+			</section>
+			<footer class="footer" mv-if="count(task)">
+				<span class="todo-count">
+					<strong>[count(!done)]</strong> item[if(count(!done) != 1, s)] left
+				</span>
+				<div class="filters">
+          <label>
+            <input type="radio" name="filter" value="all" mv-storage="none" property="filter" checked>
+            <span>All</span>
+          </label>
+          <label>
+            <input type="radio" name="filter" value="active">
+            <span>Active</span>
+          </label>
+          <label>
+            <input type="radio" name="filter" value="completed">
+            <span>Completed</span>
+          </label>
+        </div>
+			</footer>
+		</section>
+	</body>
+</html>
