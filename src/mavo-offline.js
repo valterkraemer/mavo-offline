@@ -4,7 +4,7 @@
 
   Mavo.Backend.register($.Class({
     extends: Mavo.Backend,
-    id: 'Pouchbd',
+    id: 'Offline',
     constructor: function (url, o) {
       let backendUrl = url.split('offline?')[1]
       let Backend = Mavo.Backend.types.filter(Backend => Backend.test(backendUrl))[0] || Mavo.Backend.Remote
@@ -12,43 +12,44 @@
       this.backend = new Backend(backendUrl, o)
       this.permissions = this.backend.permissions
 
-      this.online = false
-      this.loading = false
-      this.storing = false
+      this.ready = this.backend.ready
+        .then(() => {
+          this.online = false
+          this.loading = false
+          this.storing = false
 
-      this.ready = Promise.resolve()
+          this.offlineStatusElem = $('.offline-status', this.mavo.element)
 
-      this.offlineStatusElem = $('.offline-status', this.mavo.element)
-
-      if (this.offlineStatusElem) {
-        addOfflineStatusElemStyles()
-        this.updateStatus()
-
-        if (this.backend.onStatusChange) {
-          this.backend.onStatusChange(isOnline => {
-            this.online = isOnline
+          if (this.offlineStatusElem) {
+            addOfflineStatusElemStyles()
             this.updateStatus()
-          })
-        }
-      }
 
-      if (this.backend.onNewData) {
-        // Monkeypatch onNewData and store it to localStorage
-        let backendOnNewData = this.backend.onNewData.bind(this.backend)
-        this.backend.onNewData = data => {
-          this.updateStorage(data)
-          backendOnNewData(data)
-        }
-      }
+            if (this.backend.onStatusChange) {
+              this.backend.onStatusChange(isOnline => {
+                this.online = isOnline
+                this.updateStatus()
+              })
+            }
+          }
 
-      // Listen do database changes if backend supports it
-      if (this.backend.setListenForChanges) {
-        this.backend.setListenForChanges(true)
-      }
+          if (this.backend.onNewData) {
+            // Monkeypatch onNewData and store it to localStorage
+            let backendOnNewData = this.backend.onNewData.bind(this.backend)
+            this.backend.onNewData = data => {
+              this.updateStorage(data)
+              backendOnNewData(data)
+            }
+          }
 
-      if (this.backend.upload) {
-        this.upload = this.backend.upload.bind(this.backend)
-      }
+          // Listen do database changes if backend supports it
+          if (this.backend.setListenForChanges) {
+            this.backend.setListenForChanges(true)
+          }
+
+          if (this.backend.upload) {
+            this.upload = this.backend.upload.bind(this.backend)
+          }
+        })
     },
 
     load: function () {
@@ -90,7 +91,7 @@
         return data || {}
       })
 
-      function helper () {
+      function helper() {
         return this.backend.load().catch(err => {
           if (err.status === 0) {
             return delay(5000).then(() => helper())
@@ -193,13 +194,13 @@
     }
   }))
 
-  function delay (ms) {
+  function delay(ms) {
     return new Promise(resolve => {
       setTimeout(resolve, ms)
     })
   }
 
-  function getStatus (_this) {
+  function getStatus(_this) {
     // 0: Offline
     // 1: Up to date
     // 2: Loading
@@ -226,7 +227,7 @@
     return 'Done'
   }
 
-  function addOfflineStatusElemStyles () {
+  function addOfflineStatusElemStyles() {
     var styleElem = document.createElement('style')
     styleElem.type = 'text/css'
     var rules = document.createTextNode(`

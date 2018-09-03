@@ -3,15 +3,15 @@
 <head>
   <title>Todo Remote</title>
 
-  <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
-  <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
+  <script src="https://get.mavo.io/mavo.js"></script>
+  <link rel="stylesheet" href="https://get.mavo.io/mavo.css">
 
-  <script src="../../src/mavo-offline.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
 </head>
 <body>
 
   <main mv-app="todo-github"
+    mv-plugins="offline"
     mv-storage="offline?https://github.com/valter-test/mavo-todo-data">
 
     <div class="mv-bar mv-ui">

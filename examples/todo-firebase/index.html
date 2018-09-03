@@ -2,13 +2,10 @@
 <html>
 <head>
   <title>Todo</title>
-  <script src="../../../mavo-firebase/src/firebase.js"></script>
 
-  <script src="https://get.mavo.io/0.1.5/mavo.es5.min.js"></script>
-  <link rel="stylesheet" href="https://get.mavo.io/0.1.5/mavo.css">
+  <script src="https://get.mavo.io/mavo.js"></script>
+  <link rel="stylesheet" href="https://get.mavo.io/mavo.css">
 
-  <script src="../../src/mavo-offline.js"></script>
-  <script src="../../../mavo-firebase/src/mavo-firebase.js"></script>
   <link rel="stylesheet" href="../../../mavo-examples/todo/style.css">
 
   <!--<script>
@@ -27,6 +24,7 @@
 <body>
 
   <main mv-app="todo-firebase"
+    mv-plugins="offline firebase"
     mv-storage="offline?https://mavo-firebase-todo-d0311.firebaseio.com"
     mv-firebase-api-key="AIzaSyD3-4ZXpNZkWbdlC7Fdg-ean0VZ36bwoEA"
     mv-unauthenticated-permissions="read edit save"
